@@ -1,0 +1,30 @@
+{
+  "name": "serverless-api-gw-sockets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "babel src -d lib"
+  },
+  "keywords": [],
+  "author": "Enric Soler Rastrollo",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.2.2",
+    "jest": "^24.1.0",
+    "serverless": "^1.35.1",
+    "serverless-websockets-plugin": "^1.0.0"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.4.0",
+    "node-fetch": "^2.3.0",
+    "pem-jwk": "^2.0.0"
+  }
+}

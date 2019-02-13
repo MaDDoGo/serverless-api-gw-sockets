@@ -1,0 +1,24 @@
+provider:
+  name: aws
+  stage: dev
+  websocketApiRouteSelectionExpression: $request.body.action
+
+plugins:
+  - serverless-websockets-plugin
+
+functions:
+  connectionHandler:
+    handler: src/handler.handler
+    events:
+      - websocket:
+          routeKey: $connect
+      - websocket:
+          routeKey: $disconnect
+  defaultHandler:
+    events:
+      - websocket:
+          routeKey: $default
+  actionHandler:
+    events:
+      - websocket:
+          routeKey: myAction
