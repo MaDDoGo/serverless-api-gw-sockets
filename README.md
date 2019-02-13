@@ -1,6 +1,6 @@
 # Serverless Websocket API
 
-
+Serverless AWS API Gateway with Websockets and Lambda
 
 ## Description
 
