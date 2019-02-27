@@ -1,0 +1,82 @@
+ApiGatewayWebsocketsPipeline:
+  Type: AWS::CodePipeline::Pipeline
+  Properties:
+    RoleArn: !Ref CodePipelineServiceRole
+    Stages:
+      -
+        Name: GithubSource
+        ActionTypeId:
+          Category: Source
+          Owner: ThirdParty
+          Version: 1
+          Provider: Github
+          OutputArtifacts: 
+              - Name: SourceOutput
+                Configuration:
+                  Owner: MaDDoGo
+                  Repo: serverless-api-gw-sockets
+                  PollForSourceChanges: false
+                  Branch: master
+                  OAuthToken: token
+          RunOrder: 1
+      - 
+        Name: Beta
+        Actions: 
+          - 
+            Name: BetaAction
+            InputArtifacts: 
+              - 
+                Name: SourceOutput
+            ActionTypeId: 
+              Category: Deploy
+              Owner: AWS
+              Version: 1
+              Provider: CodeDeploy
+            Configuration: 
+              ApplicationName: 
+                Ref: ApplicationName
+              DeploymentGroupName: 
+                Ref: DeploymentGroupName
+            RunOrder: 1
+      - 
+        Name: Release
+        Actions: 
+          - 
+            Name: ReleaseAction
+            InputArtifacts: 
+              - 
+                Name: SourceOutput
+            ActionTypeId: 
+              Category: Deploy
+              Owner: AWS
+              Version: 1
+              Provider: CodeDeploy
+            Configuration: 
+              ApplicationName: 
+                Ref: ApplicationName
+              DeploymentGroupName: 
+                Ref: DeploymentGroupName
+            RunOrder: 1
+    ArtifactStore: 
+      Type: S3
+      Location: 
+        Ref: ArtifactStoreS3Location
+    DisableInboundStageTransitions: 
+      - 
+        StageName: Release
+        Reason: "Disabling the transition until integration tests are completed"
+GithubWebhook:
+  Type: AWS::CodePipeline::Webhook
+  Properties:
+    AuthenticationConfiguration:
+      AllowedIPRange: String
+      SecretToken: String
+    Filters: 
+      - JsonPath: "$.ref"
+        MatchEquals: refs/heads/{Branch}
+    Authentication: GITHUB_HMAC
+    TargetPipeline: !Ref ApiGatewayWebsocketsPipeline
+    TargetAction: GithubSource
+    Name: GithubUpload
+    TargetPipelineVersion: !GetAtt ApiGatewayWebsocketsPipeline.Version
+    RegisterWithThirdParty: True
