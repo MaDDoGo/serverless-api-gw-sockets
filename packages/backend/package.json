@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "deploy": "sls deploy",
+    "clean": "sls remove"
   },
   "keywords": [],
   "author": "Enric Soler Rastrollo",
@@ -19,10 +21,10 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^22.2.2",
     "jest": "^24.1.0",
-    "serverless": "^1.35.1",
-    "serverless-websockets-plugin": "^1.0.0"
+    "serverless": "^1.38.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.414.0",
     "jsonwebtoken": "^8.4.0",
     "node-fetch": "^2.3.0",
     "pem-jwk": "^2.0.0"

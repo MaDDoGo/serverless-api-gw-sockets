@@ -1,29 +1,37 @@
 const { DocumentClient } = require('aws-sdk/clients/dynamodb');
 const db = new DocumentClient();
 
+const { DYNAMODB_TABLE } = process.env;
+
 module.exports = {
   handler: async (event, ctx) => {
     const { requestContext, body } = event;
+    const { connectionId } = requestContext;
+    const { username } = JSON.parse(body);
 
-    if (!body.username) {
+    if (!username) {
       return {
         statusCode: 400,
-        body: {
+        body: JSON.stringify({
           message: 'Invalid username',
-        },
+        }),
       };
     }
     try {
       await db.update({
-        TableName: 'users',
-        Key: { connectionID: requestContext.connectionId },
-        Item: {
-          username: body.username,
+        TableName: DYNAMODB_TABLE,
+        Key: { connectionId },
+        UpdateExpression: "set username=:r",
+        ExpressionAttributeValues: {
+          ":r": username,
         },
         ConditionExpression: 'attribute_not_exists(username)',
       }).promise();
+      return {
+        statusCode: 200,
+      };
     } catch (err) {
-      console.error(err);
+      console.log(err);
       if (err.name === 'ConditionalCheckFailedException') {
         return {
           statusCode: 200,

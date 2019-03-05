@@ -1,0 +1,11 @@
+service: apigw-websocket-app
+resources:
+  Resources:
+    ChatBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: chat.serverless-barcelona.com
+        CorsConfiguration:
+          CorsConfiguration
+        WebsiteConfiguration:
+          IndexDocument: index.html

@@ -1,36 +1,37 @@
 const { DocumentClient } = require('aws-sdk/clients/dynamodb');
 const db = new DocumentClient();
 
+const { DYNAMODB_TABLE } = process.env;
+
 module.exports = {
   handler: async (event, context) => {
     console.log(event, context);
     const { requestContext } = event;
-    switch (requestContext.routeKey) {
+    const { routeKey, connectionId } = requestContext;
+    switch (routeKey) {
       case '$connect':
         await db.put({
-          TableName: 'users',
+          TableName: DYNAMODB_TABLE,
           Item: {
-            connectionID: requestContext.connectionId,
+            connectionId,
           },
         }).promise();
         break;
       case '$disconnect':
         await db.delete({
-          TableName: 'users',
-          Key: {
-            connectionID: requestContext.connectionId,
-          },
+          TableName: DYNAMODB_TABLE,
+          Key: { connectionId },
         }).promise();
         break;
       default:
         return {
           statusCode: 400,
-          body: { message: 'Unknown route' },
+          body: JSON.stringify({ message: 'Unknown route' }),
         };
     }
     return {
       statusCode: 200,
-      body: 'Welcome to the first serverless meetup.',
+      body: JSON.stringify({ message: 'Welcome to the first serverless meetup.' }),
     };
   },
 };

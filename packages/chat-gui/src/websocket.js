@@ -1,12 +1,13 @@
-const Sockette = require('sockette');
-const Actions = require('./actions');
+import Sockette from 'sockette';
+import Actions from './actions';
+import EventEmitter from 'events';
 
-export default class Sockets {
-  constructor(params) {
+export default class Sockets extends EventEmitter {
+  constructor(params = {}) {
+    super();
     const {
-      url = 'wss://9ehfvjymbl.execute-api.us-east-1.amazonaws.com/dev',
+      url = 'wss://fen75cgmua.execute-api.us-east-1.amazonaws.com/dev',
       onopen,
-      onmessage,
       onclose
     } = params;
   
@@ -14,7 +15,7 @@ export default class Sockets {
       timeout: 5e3,
       maxAttempts: 10,
       onopen,
-      onmessage,
+      onmessage: this.handleMessages,
       onclose,
       onreconnect: e => console.log('Reconnecting...', e),
       onmaximum: e => console.log('Stop Attempting!', e),
@@ -22,7 +23,12 @@ export default class Sockets {
     });
   }
 
-  sendMessage(toUser, message) {
+  handleMessages = ({ data }) => {
+    const parsed = JSON.parse(data);
+    this.emit(parsed.action, parsed);
+  }
+
+  sendMessage = (toUser, message) => {
     this.ws.json({
       action: Actions.SEND_MESSAGE,
       username: toUser,
@@ -30,14 +36,14 @@ export default class Sockets {
     });
   }
 
-  login(asUser) {
+  login = (asUser) => {
     this.ws.json({
       action: Actions.LOGIN,
       username: asUser,
     });
   }
 
-  logout(asUser) {
+  logout = (asUser) => {
     this.ws.json({
       action: Actions.LOGOUT,
       username: asUser,

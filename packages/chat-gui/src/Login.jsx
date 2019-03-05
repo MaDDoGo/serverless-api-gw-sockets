@@ -1,21 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import 'bulma/css/bulma.css';
 
-export default () => {
+export default (props) => {
+  const [user, setUser] = useState('');
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    console.log(user)
+    props.ws.login(user);
+    props.onlogin(user);
+  };
+
+  const onChange = (e) => {
+    setUser(e.target.value);
+  }
+
   return (
-    <section class="hero is-dark is-fullheight">
-      <div class="hero-body">
-        <div class="container">
-          <div class="columns is-mobile">
-            <div class="column is-half is-offset-one-quarter">
-              <div class="control has-icons-left has-icons-right">
-                <input class="input is-large" type="email" placeholder="Input username" />
-                <span class="icon is-medium is-left">
-                  <i class="fas fa-envelope"></i>
+    <section className="hero is-dark is-fullheight">
+      <div className="hero-body">
+        <div className="container">
+          <div className="columns is-mobile">
+            <div className="column is-half is-offset-one-quarter">
+              <div className="control has-icons-left has-icons-right">
+                <form onSubmit={onSubmit}>
+                  <input className="input is-large" placeholder="Input username" onChange={onChange} />
+                </form>
+                <span className="icon is-medium is-left">
+                  <i className="fas fa-envelope" />
                 </span>
-                <span class="icon is-medium is-right">
-                  <i class="fas fa-check"></i>
+                <span className="icon is-medium is-right">
+                  <i className="fas fa-check"></i>
                 </span>
               </div>
             </div>

@@ -1,23 +1,47 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 import Message from './Message';
 import SendMessage from './SendMessage';
-import websocket from './sockette';
 
-export default class Chat extends React.PureComponent {
-  constructor() {
+export default class Chat extends PureComponent {
+  constructor(props) {
     super();
-    this.state = { messages: [{message:''}] };
+    this.state = { messages: [] };
+    this.ws = props.ws;
 
-    
+    this.ws.on('message', this.onmessage);
+  }
+  onopen = (event) => {
+    console.log('onopen')
   }
 
-  saveMsg = (msg) => this.setState({
-    messages: [
-      ...this.state.messages,
-      msg
-    ]
-  });
+  onmessage = ({ data }) => {
+    try {
+      const { message, username } = JSON.parse(data);
+      this.setState({
+        messages: [
+          ...this.state.messages,
+          { text: message, username }
+        ]
+      });
+    } catch (err) {
+
+    }
+  }
+
+  onclose = (event) => {
+    console.log('onopen')
+  }
+
+  saveMsg = (msg) => {
+    this.ws.sendMessage('user', msg)
+    this.setState({
+      messages: [
+        ...this.state.messages,
+        { text: msg }
+      ]
+    });
+  } 
 
   render() {
     return (
@@ -40,7 +64,7 @@ export default class Chat extends React.PureComponent {
           <div className="hero-body">
             <div style={{ heigth: '100%', width: '100%' }}>
               {this.state.messages.map((message, i) => (
-                <Message message={message} i={i} />
+                <Message message={message} key={i} />
               ))}
             </div>
           </div>
