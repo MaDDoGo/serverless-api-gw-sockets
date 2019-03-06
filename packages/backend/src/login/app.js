@@ -1,10 +1,11 @@
 const { DocumentClient } = require('aws-sdk/clients/dynamodb');
+
 const db = new DocumentClient();
 
 const { DYNAMODB_TABLE } = process.env;
 
 module.exports = {
-  handler: async (event, ctx) => {
+  handler: async (event) => {
     const { requestContext, body } = event;
     const { connectionId } = requestContext;
     const { username } = JSON.parse(body);
@@ -21,9 +22,9 @@ module.exports = {
       await db.update({
         TableName: DYNAMODB_TABLE,
         Key: { connectionId },
-        UpdateExpression: "set username=:r",
+        UpdateExpression: 'set username=:r',
         ExpressionAttributeValues: {
-          ":r": username,
+          ':r': username,
         },
         ConditionExpression: 'attribute_not_exists(username)',
       }).promise();
@@ -34,12 +35,16 @@ module.exports = {
       console.log(err);
       if (err.name === 'ConditionalCheckFailedException') {
         return {
-          statusCode: 200,
+          statusCode: 400,
           body: {
             message: 'User already exists',
           },
         };
       }
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Unknown error' }),
+      };
     }
   },
 };

@@ -1,5 +1,6 @@
 const { DocumentClient } = require('aws-sdk/clients/dynamodb');
 const APIGatewayManagementAPI = require('aws-sdk/clients/apigatewaymanagementapi');
+
 const db = new DocumentClient();
 
 const { DYNAMODB_TABLE } = process.env;

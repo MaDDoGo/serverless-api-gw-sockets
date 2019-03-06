@@ -13,14 +13,12 @@ module.exports = {
     // Lambda config
     const {
       AWS_REGION = 'us-east-1',
-      AWS_ACCOUNT_ID = invalidParameter('AWS_ACCOUNT_ID'),
       COGNITO_USERPOOL_ID = invalidParameter('COGNITO_USERPOOL_ID'),
     } = process.env;
 
     // Event parsing
     const {
       headers,
-      methodArn,
     } = event;
 
     const [, token] = headers['X-Authorization-Token'].split(' ');
@@ -33,6 +31,7 @@ module.exports = {
 
     try {
       jwt.verify(token, jwk2pem(key));
+      return { statusCode: 200 };
     } catch (error) {
       console.error(error.message);
       switch (error.name) {
@@ -44,7 +43,7 @@ module.exports = {
           return { statusCode: 401 };
         }
         default: {
-          return;
+          return { statusCode: 400 };
         }
       }
     }

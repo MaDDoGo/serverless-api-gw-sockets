@@ -1,11 +1,12 @@
+/* eslint-disable linebreak-style */
 const { DocumentClient } = require('aws-sdk/clients/dynamodb');
+
 const db = new DocumentClient();
 
 const { DYNAMODB_TABLE } = process.env;
 
 module.exports = {
-  handler: async (event, context) => {
-    console.log(event, context);
+  handler: async (event) => {
     const { requestContext } = event;
     const { routeKey, connectionId } = requestContext;
     switch (routeKey) {
