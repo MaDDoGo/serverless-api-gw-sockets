@@ -7,7 +7,6 @@ export default (props) => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    console.log(user)
     props.ws.login(user);
     props.onlogin(user);
   };

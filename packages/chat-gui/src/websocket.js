@@ -7,20 +7,26 @@ export default class Sockets extends EventEmitter {
     super();
     const {
       url = 'wss://fen75cgmua.execute-api.us-east-1.amazonaws.com/dev',
-      onopen,
-      onclose
     } = params;
   
     this.ws = new Sockette(url, {
       timeout: 5e3,
       maxAttempts: 10,
-      onopen,
+      onopen: this.onopen,
       onmessage: this.handleMessages,
-      onclose,
+      onclose: this.onclose,
       onreconnect: e => console.log('Reconnecting...', e),
       onmaximum: e => console.log('Stop Attempting!', e),
       onerror: e => console.log('Error:', e),
     });
+  }
+
+  onopen = () => {
+    this.emit('connected');
+  }
+
+  onclose = () => {
+    this.emit('disconnected');
   }
 
   handleMessages = ({ data }) => {

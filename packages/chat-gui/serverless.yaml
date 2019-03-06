@@ -1,4 +1,7 @@
 service: apigw-websocket-app
+provider:
+  name: aws
+  stage: dev
 resources:
   Resources:
     ChatBucket:
@@ -6,6 +9,12 @@ resources:
       Properties:
         BucketName: chat.serverless-barcelona.com
         CorsConfiguration:
-          CorsConfiguration
+          CorsRules:
+            - 
+              AllowedMethods:
+                - GET
+              AllowedOrigins:
+                - chat.serverless-barcelona.com
+              Id: ${self:service}
         WebsiteConfiguration:
           IndexDocument: index.html
