@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
+import * as ReactDOM from 'react-dom';
 
 import Header from './header';
 import Message from './message';
@@ -9,9 +10,22 @@ export default class Chat extends PureComponent {
     super();
     this.state = { messages: [] };
     this.ws = props.ws;
+    this.username = props.username;
 
     this.ws.on('message', this.onmessage);
   }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
+  scrollToBottom = () => {
+    const { messageList } = this.refs;
+    const scrollHeight = messageList.scrollHeight;
+    const height = messageList.clientHeight;
+    const maxScrollTop = scrollHeight - height;
+    ReactDOM.findDOMNode(messageList).scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+    }
 
   onmessage = (evt) => {
     try {
@@ -28,20 +42,20 @@ export default class Chat extends PureComponent {
   }
 
   saveMsg = (msg) => {
-    this.ws.sendMessage('user', msg)
+    this.ws.sendMessage(this.username, msg)
     this.setState({
       messages: [
         ...this.state.messages,
         { text: msg }
       ]
     });
-  } 
+  }
 
   render() {
     return (
       <Fragment>
         <Header />
-        <div className="container" style={{overflowY: 'auto', height: `${document.documentElement.clientHeight - 293}px` }}>
+        <div className="container" ref="messageList" style={{ overflowY: 'auto', height: `${document.documentElement.clientHeight - 293}px`, padding: '15px' }}>
           {this.state.messages.map((message, i) => (
             <Message message={message} key={i} />
           ))}

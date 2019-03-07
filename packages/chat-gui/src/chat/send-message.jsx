@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default ({ saveMsg }) => (
-  <form onSubmit={(e) => {
+  <form autoComplete="off" onSubmit={(e) => {
     e.preventDefault();
     saveMsg(e.target.elements.userInput.value);
     e.target.reset();

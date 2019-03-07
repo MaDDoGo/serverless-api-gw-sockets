@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import 'bulma/css/bulma.css';
+import '@fortawesome/fontawesome-free/css/all.css'
 
 export default (props) => {
   const [user, setUser] = useState('');
@@ -20,17 +21,21 @@ export default (props) => {
       <div className="hero-body">
         <div className="container">
           <div className="columns is-mobile">
-            <div className="column is-half is-offset-one-quarter">
-              <div className="control has-icons-left has-icons-right">
+            <div className="column is-8 is-offset-2">
+              <div className="control has-icons-left">
                 <form onSubmit={onSubmit}>
-                  <input className="input is-large" placeholder="Input username" onChange={onChange} />
+                  <div className="field has-addons">
+                    <div className="control is-expanded">
+                      <input className="input" placeholder="Username" onChange={onChange} />
+                      <span className="icon is-small is-left">
+                        <i className="fas fa-user"></i>
+                      </span>
+                    </div>
+                    <div className="control">
+                      <button className="button"><i class="fas fa-arrow-right"></i></button>
+                    </div>
+                  </div>
                 </form>
-                <span className="icon is-medium is-left">
-                  <i className="fas fa-envelope" />
-                </span>
-                <span className="icon is-medium is-right">
-                  <i className="fas fa-check"></i>
-                </span>
               </div>
             </div>
           </div>
