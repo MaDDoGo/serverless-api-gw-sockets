@@ -21,12 +21,25 @@ module.exports = {
       ProjectionExpression: 'connectionId',
     }).promise();
 
-    const promises = Items.map(({ connectionId }) => {
+    const promises = Items.map(async ({ connectionId }) => {
       if (connectionId === requestContext.connectionId) return Promise.resolve();
-      return apiGateway.postToConnection({
-        ConnectionId: connectionId,
-        Data: JSON.stringify({ action: 'message', message, username }),
-      }).promise();
+      try {
+        return apiGateway.postToConnection({
+          ConnectionId: connectionId,
+          Data: JSON.stringify({ action: 'message', message, username }),
+        }).promise();
+      } catch (err) {
+        if (err.statusCode === 410) {
+          console.log(`Found stale connection, deleting ${connectionId}`);
+          db.delete({
+            TableName: DYNAMODB_TABLE,
+            Key: { connectionId }
+          }).promise();
+          return Promise.resolve();
+        }
+        console.log(`Failed to post. Error: ${JSON.stringify(err)}`);
+        return Promise.resolve();
+      }
     });
     await Promise.all(promises);
     return {
