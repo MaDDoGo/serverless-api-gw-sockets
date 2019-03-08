@@ -1,11 +1,11 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import * as ReactDOM from 'react-dom';
 
 import Header from './header';
 import Message from './message';
 import SendMessage from './send-message';
 
-export default class Chat extends PureComponent {
+export default class Chat extends Component {
   constructor(props) {
     super();
     this.state = { messages: [] };
@@ -15,7 +15,20 @@ export default class Chat extends PureComponent {
     this.ws.on('message', this.onmessage);
   }
 
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+    this.scrollToBottom();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+  }
+
   componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
+  updateDimensions = () => {
     this.scrollToBottom();
   }
 

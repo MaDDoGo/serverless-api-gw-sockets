@@ -32,7 +32,7 @@ export default (props) => {
                       </span>
                     </div>
                     <div className="control">
-                      <button className="button"><i class="fas fa-arrow-right"></i></button>
+                      <button className="button"><i className="fas fa-arrow-right"></i></button>
                     </div>
                   </div>
                 </form>
